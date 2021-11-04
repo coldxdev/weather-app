@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -12,6 +12,12 @@
 
 <body>
 	<main class="main">
+		<div class="theme-toggler">
+			<p class="theme-toggler__text">Light theme</p>
+			<button class="theme-toggler__btn">
+				<div class="theme-toggler__ball"></div>
+			</button>
+		</div>
 		<h1 class="main__title">Pick location</h1>
 		<p class="main__subtitle">
 			Find the area city that you want to know the detailed weather info at this time
@@ -20,6 +26,7 @@
 			<div class="main__form-wrapper">
 				<input class="main__form-input" id="search-input" placeholder="Search" type="search">
 			</div>
+			<button class="main__form-btn">Find</button>
 			<div class="main__form-error"></div>
 		</form>
 		<div class="forecasts"></div>

@@ -6,62 +6,17 @@ const searchInput = document.getElementById('search-input');
 const error = document.querySelector('.main__form-error');
 
 let receivedCity = [];
-let clientCity = localStorage.getItem('city') || '';
+let clientCity = localStorage.getItem('clientCity') || '';
 
 form.addEventListener('submit', (e) => {
 	e.preventDefault();
 
 	if (searchInput.value) {
-		getWeather(searchInput.value);
+		getWeatherByCity(searchInput.value);
 	} else {
 		errorHandler('Field should not be empty', true);
 	}
 });
-
-function errorHandler(text, active) {
-	error.textContent = text;
-	active ? error.classList.add('active') : error.classList.remove('active');
-}
-
-async function getWeather(city) {
-	try {
-		await fetch(
-			`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}&units=metric`
-		)
-			.then((response) => {
-				if (response.status === 200) {
-					const data = response.json();
-					errorHandler('', false);
-
-					return data;
-				} else {
-					errorHandler('Not found', true);
-				}
-			})
-			.then((data) => {
-				if (receivedCity.length > 0) {
-					let isDupclicate = false;
-
-					receivedCity.forEach((city) => {
-						if (data.name === city) {
-							isDupclicate = true;
-						} else {
-							isDupclicate = false;
-						}
-					});
-
-					if (!isDupclicate) {
-						renderForecast(data);
-						errorHandler('', false);
-					} else {
-						errorHandler('Current city already added', true);
-					}
-				} else {
-					renderForecast(data);
-				}
-			});
-	} catch (err) {}
-}
 
 function renderForecast(data) {
 	const city = data.name;
@@ -121,6 +76,51 @@ function renderForecast(data) {
 	forecasts.insertAdjacentElement('afterbegin', forecast);
 }
 
+function errorHandler(text, active) {
+	error.textContent = text;
+	active ? error.classList.add('active') : error.classList.remove('active');
+}
+
+async function getWeatherByCity(city) {
+	try {
+		await fetch(
+			`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${WEATHER_API_KEY}&units=metric`
+		)
+			.then((response) => {
+				if (response.status === 200) {
+					const data = response.json();
+					errorHandler('', false);
+
+					return data;
+				} else {
+					errorHandler('Not found', true);
+				}
+			})
+			.then((data) => {
+				if (receivedCity.length > 0) {
+					let isDupclicate = false;
+
+					receivedCity.forEach((city) => {
+						if (data.name === city) {
+							isDupclicate = true;
+						} else {
+							isDupclicate = false;
+						}
+					});
+
+					if (!isDupclicate) {
+						renderForecast(data);
+						errorHandler('', false);
+					} else {
+						errorHandler('Current city already added', true);
+					}
+				} else {
+					renderForecast(data);
+				}
+			});
+	} catch (err) {}
+}
+
 async function getClientCity({ latitude, longitude }) {
 	try {
 		await fetch(
@@ -134,19 +134,66 @@ async function getClientCity({ latitude, longitude }) {
 				}
 			})
 			.then((data) => {
-				localStorage.setItem('city', data.name);
-				clientCity = localStorage.getItem('city');
-				getWeather(clientCity);
+				localStorage.setItem('clientCity', data.name);
+				clientCity = localStorage.getItem('clientCity');
 			});
+
+		getWeatherByCity(clientCity);
 	} catch (err) {
 		console.log(err);
 	}
 }
 
 if (clientCity) {
-	getWeather(clientCity);
+	getWeatherByCity(clientCity);
 } else {
 	navigator.geolocation.getCurrentPosition(({ coords }) => {
 		getClientCity(coords);
 	});
 }
+
+/*=============== Theme Toggler ===============*/
+
+const themeToggler = () => {
+	const themeTogglerBtn = document.querySelector('.theme-toggler__btn');
+	const themeTogglerText = document.querySelector('.theme-toggler__text');
+
+	let isDarkTheme =
+		window.matchMedia &&
+		window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+	if (localStorage.getItem('dark-theme') !== null) {
+		if (localStorage.getItem('dark-theme') === 'true') {
+			isDarkTheme = true;
+		} else {
+			isDarkTheme = false;
+		}
+	}
+
+	function setTheme() {
+		if (isDarkTheme) {
+			themeTogglerBtn.classList.add('active');
+			themeTogglerText.textContent = 'Dark theme';
+			document.body.classList.add('dark-theme');
+		} else {
+			themeTogglerBtn.classList.remove('active');
+			themeTogglerText.textContent = 'Light theme';
+			document.body.classList.remove('dark-theme');
+		}
+	}
+
+	themeTogglerBtn.addEventListener('click', function () {
+		if (this.classList.contains('active')) {
+			isDarkTheme = false;
+			localStorage.setItem('dark-theme', isDarkTheme);
+		} else {
+			isDarkTheme = true;
+			localStorage.setItem('dark-theme', isDarkTheme);
+		}
+		setTheme();
+	});
+
+	setTheme();
+};
+
+themeToggler();
