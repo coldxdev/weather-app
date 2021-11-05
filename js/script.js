@@ -158,42 +158,43 @@ const themeToggler = () => {
 	const themeTogglerBtn = document.querySelector('.theme-toggler__btn');
 	const themeTogglerText = document.querySelector('.theme-toggler__text');
 
-	let isDarkTheme =
+	let darkMode = localStorage.getItem('dark-mode');
+
+	if (
+		localStorage.getItem('dark-mode') === null &&
 		window.matchMedia &&
-		window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-	if (localStorage.getItem('dark-theme') !== null) {
-		if (localStorage.getItem('dark-theme') === 'true') {
-			isDarkTheme = true;
-		} else {
-			isDarkTheme = false;
-		}
+		window.matchMedia('(prefers-color-scheme: dark)').matches
+	) {
+		localStorage.setItem('dark-mode', 'enabled');
 	}
 
-	function setTheme() {
-		if (isDarkTheme) {
-			themeTogglerBtn.classList.add('active');
-			themeTogglerText.textContent = 'Dark theme';
-			document.body.classList.add('dark-theme');
-		} else {
-			themeTogglerBtn.classList.remove('active');
-			themeTogglerText.textContent = 'Light theme';
-			document.body.classList.remove('dark-theme');
-		}
+	const enableDarkMode = () => {
+		themeTogglerBtn.classList.add('active');
+		themeTogglerText.textContent = 'Dark mode';
+		document.body.classList.add('dark-mode');
+		localStorage.setItem('dark-mode', 'enabled');
+	};
+
+	const disableDarkMode = () => {
+		themeTogglerBtn.classList.remove('active');
+		themeTogglerText.textContent = 'Light mode';
+		document.body.classList.remove('dark-mode');
+		localStorage.setItem('dark-mode', 'disabled');
+	};
+
+	if (darkMode === 'enabled') {
+		enableDarkMode();
 	}
 
-	themeTogglerBtn.addEventListener('click', function () {
-		if (this.classList.contains('active')) {
-			isDarkTheme = false;
-			localStorage.setItem('dark-theme', isDarkTheme);
+	themeTogglerBtn.addEventListener('click', () => {
+		darkMode = localStorage.getItem('dark-mode');
+
+		if (darkMode === 'enabled') {
+			disableDarkMode();
 		} else {
-			isDarkTheme = true;
-			localStorage.setItem('dark-theme', isDarkTheme);
+			enableDarkMode();
 		}
-		setTheme();
 	});
-
-	setTheme();
 };
 
 themeToggler();

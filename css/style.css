@@ -31,7 +31,7 @@ p {
 }
 
 
-:root body.dark-theme {
+:root body.dark-mode {
 	--background: #0F044C;
 	--accent: #1225a1;
 	--gray: #787A91;
