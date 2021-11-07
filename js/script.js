@@ -158,8 +158,6 @@ const themeToggler = () => {
 	const themeTogglerBtn = document.querySelector('.theme-toggler__btn');
 	const themeTogglerText = document.querySelector('.theme-toggler__text');
 
-	let darkMode = localStorage.getItem('dark-mode');
-
 	if (
 		localStorage.getItem('dark-mode') === null &&
 		window.matchMedia &&
@@ -167,6 +165,7 @@ const themeToggler = () => {
 	) {
 		localStorage.setItem('dark-mode', 'enabled');
 	}
+	let darkMode = localStorage.getItem('dark-mode');
 
 	const enableDarkMode = () => {
 		themeTogglerBtn.classList.add('active');
