@@ -121,11 +121,32 @@ async function getWeatherByCity(city) {
 	} catch (err) {}
 }
 
-async function getClientCity({ latitude, longitude }) {
+// async function getClientCity({ latitude, longitude }) {
+// 	try {
+// 		await fetch(
+// 			`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
+// 		)
+// 			.then((response) => {
+// 				if (response.status === 200) {
+// 					const data = response.json();
+
+// 					return data;
+// 				}
+// 			})
+// 			.then((data) => {
+// 				localStorage.setItem('clientCity', data.name);
+// 				clientCity = localStorage.getItem('clientCity');
+// 			});
+
+// 		getWeatherByCity(clientCity);
+// 	} catch (err) {
+// 		console.log(err);
+// 	}
+// }
+
+async function getClientCity() {
 	try {
-		await fetch(
-			`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
-		)
+		await fetch(`https://ipapi.co/json/`)
 			.then((response) => {
 				if (response.status === 200) {
 					const data = response.json();
@@ -134,7 +155,7 @@ async function getClientCity({ latitude, longitude }) {
 				}
 			})
 			.then((data) => {
-				localStorage.setItem('clientCity', data.name);
+				localStorage.setItem('clientCity', data.city);
 				clientCity = localStorage.getItem('clientCity');
 			});
 
@@ -147,9 +168,10 @@ async function getClientCity({ latitude, longitude }) {
 if (clientCity) {
 	getWeatherByCity(clientCity);
 } else {
-	navigator.geolocation.getCurrentPosition(({ coords }) => {
-		getClientCity(coords);
-	});
+	getClientCity();
+	// navigator.geolocation.getCurrentPosition(({ coords }) => {
+	// 	getClientCity(coords);
+	// });
 }
 
 /*=============== Theme Toggler ===============*/
